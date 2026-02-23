@@ -1,107 +1,66 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
 </script>
 
 <template>
-  <nav class="navbar bg-dark navbar-dark">
-    <div class="container-fluid">
-      <router-link class="navbar-brand" to="/">
+  <nav class="navbar navbar-dark bg-dark shadow-sm py-2">
+    <div class="container d-flex justify-content-between align-items-center">
+      
+      <router-link class="navbar-brand d-flex align-items-center" to="/">
         <img 
-            src="@/assets/logo.svg"  
-            alt="" 
-            width="30" 
-            height="24"
-            class="d-inline-block align-text-top">
-         PokeApi
+          src="@/assets/logo.svg" 
+          alt="Logo" 
+          width="30" 
+          height="30" 
+          class="d-inline-block align-text-top me-2"
+        >
+        <span class="fw-bold">PokeApp</span>
       </router-link>
-    <div>
-      <router-link 
-                  active-class="active"
-                  class="btn btn-outline-primary me-2" 
-                  to="/"
-                  >Home</router-link>
-      <router-link
-                  active-class="active" 
-                  class="btn btn-outline-primary me-2"  
-                  to="/pokemons"
-                  >Pokemons</router-link>
-      <router-link
-                  active-class="active" 
-                  class="btn btn-outline-primary me-2"  
-                  to="/favoritos"
-                  >Favoritos</router-link>            
-  
-        </div>
-    </div>
-  </nav> 
 
-<div class="container text-center">
-  <RouterView />
-</div> 
+      <div class="nav-buttons">
+        <router-link 
+          class="btn btn-outline-primary btn-sm me-2" 
+          to="/"
+          exact-active-class="active"
+        >
+          Pokemons
+        </router-link>
+        <router-link 
+          class="btn btn-outline-primary btn-sm" 
+          to="/favoritos"
+          exact-active-class="active"
+        >
+          Favoritos
+        </router-link>
+      </div>
+
+    </div>
+  </nav>
+
+  <div class="container mt-4">
+    <RouterView />
+  </div>
 </template>
 
-
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+/* Estilos para que los botones no ocupen todo el ancho y se vean profesionales */
+.nav-buttons {
+  display: flex;
+  gap: 5px; /* Espacio pequeño entre botones */
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+/* Ajuste opcional: si quieres que el nav sea aún más angosto que el resto del contenido */
+.navbar .container {
+  max-width: 900px; /* Limita el ancho máximo del menú */
 }
 
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
+.navbar-brand {
+  font-size: 1.1rem;
 }
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+/* Estilo para el botón activo */
+.active {
+  background-color: #0d6efd !important;
+  color: white !important;
 }
 </style>

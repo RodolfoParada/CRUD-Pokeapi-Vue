@@ -8,7 +8,7 @@ import { RouterLink, RouterView } from 'vue-router'
       
       <router-link class="navbar-brand d-flex align-items-center" to="/">
         <img 
-          src="./assets/pokeapi.png" 
+          src="@/assets/pokeapi.png" 
           alt="Logo" 
           width="70" 
           height="30" 

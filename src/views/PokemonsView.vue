@@ -1,23 +1,33 @@
 <script setup>
-import { useGetData } from '../composable/getData'; // [cite: 368]
-import { RouterLink } from 'vue-router';
-// Eliminamos el uso de useRoute y useRouter si no se usan, 
-// o los importamos si planeas usarlos después.
+import { useGetData } from '../composable/getData'; 
+import { RouterLink, useRouter } from 'vue-router';  
 import { useFavoritosStore } from '../store/favoritos'; 
 
-// Importación necesaria para evitar errores si decides usarlos
-// import { useRoute, useRouter } from 'vue-router'; 
-
+// Inicialización de herramientas
+const router = useRouter(); 
 const useFavoritos = useFavoritosStore(); 
-const { data, loading, getData, error } = useGetData(); // [cite: 369]
+const { data, loading, getData, error } = useGetData(); 
 
-// Carga inicial con límite de 12 [cite: 370]
+/**
+ * Navega programáticamente a la ruta de inicio.
+ * Se asegura de usar el router correctamente para evitar errores 404.
+ */
+const back = () => {
+  router.push('/'); // [cite: 425]
+};
+
+// Carga inicial de datos limitada a 12 pokémons por página
 getData('https://pokeapi.co/api/v2/pokemon?limit=12');
 </script>
 
 <template>
   <div class="container py-4">
-    <h1 class="display-5 mb-4 text-primary text-center">Explora los Pokémons</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="display-5 text-primary mb-0">Explora los Pokémons</h1>
+      <button @click="back" class="btn btn-outline-secondary btn-sm">
+        Volver al Inicio
+      </button>
+    </div>
 
     <div v-if="loading" class="d-flex justify-content-center my-5">
       <div class="spinner-border text-primary" role="status">
@@ -94,10 +104,12 @@ getData('https://pokeapi.co/api/v2/pokemon?limit=12');
 .transition-hover {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
+
 .transition-hover:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
 }
+
 .card-title {
   color: #2c3e50;
 }

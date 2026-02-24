@@ -1,13 +1,15 @@
-import { createRouter, createWebHistory } from 'vue-router'
+// Asegúrate de agregar createWebHashHistory en la importación
+import { createRouter, createWebHashHistory } from 'vue-router' 
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  // Ahora la función ya está disponible para ser usada
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   linkActiveClass: "active",
   routes: [
     {
       path: '/',
       name: 'home',
-      component: () => import('../views/PokemonsView.vue'), // Pokémon como página principal
+      component: () => import('../views/PokemonsView.vue'),
     },
     {
       path: '/pokemons/:name',

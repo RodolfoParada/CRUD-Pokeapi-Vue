@@ -8,9 +8,9 @@ import { RouterLink, RouterView } from 'vue-router'
       
       <router-link class="navbar-brand d-flex align-items-center" to="/">
         <img 
-          src="@/assets/logo.svg" 
+          src="@/assets/pokeapi.png" 
           alt="Logo" 
-          width="30" 
+          width="70" 
           height="30" 
           class="d-inline-block align-text-top me-2"
         >

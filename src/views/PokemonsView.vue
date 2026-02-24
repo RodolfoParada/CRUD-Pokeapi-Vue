@@ -1,11 +1,13 @@
 <script setup>
 import { useGetData } from '../composable/getData'; 
 import { RouterLink, useRouter } from 'vue-router';  
-import { useFavoritosStore } from '../store/favoritos'; 
+import { usePokeNavigationStore } from '../store/pokeNavigation'
+import { watch, computed } from 'vue'
+
 
 // Inicialización de herramientas
 const router = useRouter(); 
-const useFavoritos = useFavoritosStore(); 
+const navigationStore = usePokeNavigationStore()
 const { data, loading, getData, error } = useGetData(); 
 
 /**
@@ -13,11 +15,30 @@ const { data, loading, getData, error } = useGetData();
  * Se asegura de usar el router correctamente para evitar errores 404.
  */
 const back = () => {
-  router.push('/'); // [cite: 425]
+  router.push('/');
 };
 
 // Carga inicial de datos limitada a 12 pokémons por página
-getData('https://pokeapi.co/api/v2/pokemon?limit=12');
+
+
+watch(
+  () => navigationStore.currentUrl,
+  (newUrl) => {
+    if (!newUrl) return
+    getData(newUrl)
+  },
+  { immediate: true }
+)
+const currentPage = computed(() => {
+  if (!data.value) return 1
+
+  const url = navigationStore.currentUrl
+  const params = new URL(url).searchParams
+  const offset = Number(params.get('offset')) || 0
+  const limit = Number(params.get('limit')) || 12
+
+  return Math.floor(offset / limit) + 1
+})
 </script>
 
 <template>
@@ -69,26 +90,35 @@ getData('https://pokeapi.co/api/v2/pokemon?limit=12');
       </div>
 
       <div class="d-flex justify-content-between align-items-center mt-5">
-        <button
-          :disabled="!data.previous"
-          class="btn btn-warning px-4 shadow-sm"
-          @click="getData(data.previous)" 
-        >
-          Anterior
-        </button>
+  <button
+  :disabled="!data.previous"
+  class="btn btn-warning px-4 shadow-sm"
+  @click="() => { 
+    navigationStore.setUrl(data.previous)
+    getData(data.previous)
+  }"
+>
+  Anterior
+</button>
+<div class="text-center mt-3 fw-bold">
+  Página {{ currentPage }}
+</div>
+<button
+  :disabled="!data.next"
+  class="btn btn-primary px-4 shadow-sm"
+  @click="() => { 
+    navigationStore.setUrl(data.next)
+    getData(data.next)
+  }"
+>
+  Siguiente
+</button>
 
-        <span class="text-muted small">Mostrando 12 por página</span>
-
-        <button
-          :disabled="!data.next"
-          class="btn btn-primary px-4 shadow-sm"
-          @click="getData(data.next)"
-        >
-          Siguiente
-        </button>
       </div>
     </div>
   </div>
+
+
 </template>
 
 <style scoped>

@@ -1,82 +1,92 @@
 <script setup>
-import { useGetData } from '../composable/getData'; // [cite: 416]
-import { useRoute, useRouter } from 'vue-router'; // 
-import { useFavoritosStore } from '../store/favoritos'; // 
+import { onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useGetData } from '../composable/getData';
+import { useFavoritosStore } from '../store/favoritos'; // Ruta relativa obligatoria
 
-// Inicialización de herramientas de navegación
-const route = useRoute(); // [cite: 420]
-const router = useRouter(); // 
-const useFavoritos = useFavoritosStore(); // [cite: 421]
+const route = useRoute();
+const router = useRouter();
+const storeFavoritos = useFavoritosStore();
 
-// Desestructuración de funciones del store y composable
-const { add, findPoke } = useFavoritos; // [cite: 422]
-const { getData, data, loading, error } = useGetData(); // [cite: 423]
+const { add, findPoke } = storeFavoritos;
+const { getData, data, loading, error } = useGetData();
 
-/**
- * Función corregida para volver. 
- * Redirige al usuario a la ruta principal ('/') definida en el router.
- */
 const back = () => {
-  router.push('/'); // [cite: 425]
+  router.push('/');
 };
 
-// Petición de datos basada en el nombre del Pokémon de la URL
-getData(`https://pokeapi.co/api/v2/pokemon/${route.params.name}`); // [cite: 427]
+onMounted(() => {
+  // Disparamos la petición al montar el componente
+  if (route.params.name) {
+    getData(`https://pokeapi.co/api/v2/pokemon/${route.params.name}`);
+  }
+});
 </script>
 
 <template>
   <div class="container py-5">
     <div v-if="loading" class="text-center py-5">
       <div class="spinner-border text-primary" role="status"></div>
-      <p class="mt-2 text-muted">Cargando información del Pokémon...</p>
+      <p class="mt-2 text-muted">Buscando datos del Pokémon...</p>
     </div>
 
-    <div v-if="error" class="alert alert-danger shadow-sm text-center">
-      <h4 class="alert-heading">¡Error!</h4>
-      <p>No se pudo encontrar información de: <strong>{{ $route.params.name }}</strong></p>
-      <button @click="back" class="btn btn-outline-danger btn-sm">Volver al listado</button>
+    <div v-else-if="error" class="alert alert-danger text-center shadow-sm">
+      <h4 class="fw-bold">¡Error de conexión!</h4>
+      <p>No se pudo encontrar información de: <strong>{{ route.params.name }}</strong></p>
+      <button @click="back" class="btn btn-danger btn-sm">Volver al listado</button>
     </div>
 
-    <div v-if="data" class="row justify-content-center">
+    <div v-else-if="data" class="row justify-content-center">
       <div class="col-md-6 col-lg-5">
         <div class="card shadow-lg border-0 overflow-hidden">
           
           <div class="card-header bg-primary text-white text-center py-4">
             <img 
-              :src="data.sprites?.front_default" 
+              :src="data.sprites?.other?.['official-artwork']?.front_default || data.sprites?.front_default" 
               :alt="data.name" 
               class="img-fluid pokemon-detail-img"
             >
-            <h2 class="text-capitalize mt-2 mb-0">{{ data.name }}</h2>
+            <h2 class="text-capitalize mt-3 mb-0 fw-bold">{{ data.name }}</h2>
           </div>
 
-          <div class="card-body p-4 text-center">
-            <div class="d-flex justify-content-around mb-4">
-              <div class="text-center">
-                <small class="text-muted d-block">Altura</small>
-                <strong>{{ data.height / 10 }} m</strong>
+          <div class="card-body p-4">
+            <div class="row text-center mb-4">
+              <div class="col border-end">
+                <small class="text-muted d-block text-uppercase">Altura</small>
+                <span class="h6 fw-bold">{{ data.height / 10 }} m</span>
               </div>
-              <div class="text-center border-start border-end px-4">
-                <small class="text-muted d-block">Peso</small>
-                <strong>{{ data.weight / 10 }} kg</strong>
+              <div class="col border-end">
+                <small class="text-muted d-block text-uppercase">Peso</small>
+                <span class="h6 fw-bold">{{ data.weight / 10 }} kg</span>
               </div>
-              <div class="text-center">
-                <small class="text-muted d-block">ID</small>
-                <strong>#{{ data.id }}</strong>
+              <div class="col">
+                <small class="text-muted d-block text-uppercase">ID</small>
+                <span class="h6 fw-bold">#{{ data.id }}</span>
               </div>
             </div>
 
-            <div class="d-grid gap-2">
+            <h6 class="fw-bold mb-3">Habilidades principales:</h6>
+            <div class="mb-4 d-flex flex-wrap gap-2">
+              <span 
+                v-for="skill in data.abilities" 
+                :key="skill.ability.name"
+                class="badge bg-info text-dark border-0 py-2 px-3 mr-3 text-capitalize"
+              >
+                {{ skill.ability.name }}
+              </span>
+            </div>
+
+            <div class="d-grid gap-3">
               <button 
                 :disabled="findPoke(data.name)" 
-                class="btn btn-success py-2 shadow-sm" 
+                class="btn btn-success  shadow-sm" 
                 @click="add(data)"
               >
-                {{ findPoke(data.name) ? '⭐ En favoritos' : '⭐ Agregar a Favoritos' }}
+                {{ findPoke(data.name) ? '⭐ Ya es favorito' : '⭐ Agregar a Favoritos' }}
               </button>
               
-              <button @click="back" class="btn btn-outline-secondary mt-2">
-                Volver al listado
+              <button @click="back" class="btn float-right btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Volver al listado
               </button>
             </div>
           </div>
@@ -88,16 +98,18 @@ getData(`https://pokeapi.co/api/v2/pokemon/${route.params.name}`); // [cite: 427
 
 <style scoped>
 .pokemon-detail-img {
-  width: 150px;
-  height: 150px;
-  filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.2));
+  width: 180px;
+  height: 180px;
+  filter: drop-shadow(0 8px 12px rgba(0,0,0,0.3));
+  transition: transform 0.3s ease;
 }
-
+.pokemon-detail-img:hover {
+  transform: scale(1.1);
+}
 .card {
   border-radius: 1.5rem;
 }
-
-.text-capitalize {
-  text-transform: capitalize;
+.badge {
+  font-size: 0.9rem;
 }
 </style>

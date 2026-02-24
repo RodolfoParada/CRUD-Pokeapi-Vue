@@ -28,7 +28,7 @@ const { remove } = useFavoritos;
             >
           </div>
 
-          <div class="card-body text-center">
+          <div class="card-body text-center ">
             <div class="mb-2">
               <span class="badge rounded-pill bg-dark text-white">
                 #{{ poke.id }}
@@ -36,7 +36,7 @@ const { remove } = useFavoritos;
             </div>
             <h5 class="card-title text-capitalize fw-bold">{{ poke.name }}</h5>
             
-            <div class="d-grid gap-2 mt-3">
+            <div class="d-grid gap-2 mt-3  ">
               <router-link 
                 :to="`/pokemons/${poke.name}`" 
                 class="btn btn-outline-primary btn-sm"
@@ -44,7 +44,7 @@ const { remove } = useFavoritos;
                 Detalles
               </router-link>
               <button 
-                class="btn btn-danger btn-sm" 
+                class="btn btn-danger ml-3 btn-sm" 
                 @click="remove(poke.id)"
               >
                 Eliminar

@@ -24,9 +24,6 @@ getData('https://pokeapi.co/api/v2/pokemon?limit=12');
   <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h1 class="display-5 text-primary mb-0">Explora los Pokémons</h1>
-      <button @click="back" class="btn btn-outline-secondary btn-sm">
-        Volver al Inicio
-      </button>
     </div>
 
     <div v-if="loading" class="d-flex justify-content-center my-5">

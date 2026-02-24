@@ -1,10 +1,17 @@
 <script setup>
 import { useGetData } from '../composable/getData'; // [cite: 368]
 import { RouterLink } from 'vue-router';
+// Eliminamos el uso de useRoute y useRouter si no se usan, 
+// o los importamos si planeas usarlos después.
+import { useFavoritosStore } from '../store/favoritos'; 
 
+// Importación necesaria para evitar errores si decides usarlos
+// import { useRoute, useRouter } from 'vue-router'; 
+
+const useFavoritos = useFavoritosStore(); 
 const { data, loading, getData, error } = useGetData(); // [cite: 369]
 
-// Carga inicial [cite: 370]
+// Carga inicial con límite de 12 [cite: 370]
 getData('https://pokeapi.co/api/v2/pokemon?limit=12');
 </script>
 
@@ -25,7 +32,14 @@ getData('https://pokeapi.co/api/v2/pokemon?limit=12');
         <div v-for="poke in data.results" :key="poke.name" class="col">
           <div class="card h-100 shadow-sm border-0 transition-hover">
             
-          
+            <div class="text-center bg-light p-3">
+              <img 
+                :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${poke.url.split('/')[6]}.png`" 
+                :alt="poke.name"
+                class="img-fluid pokemon-img"
+                loading="lazy"
+              >
+            </div>
 
             <div class="card-body text-center">
               <div class="mb-3">
@@ -33,14 +47,9 @@ getData('https://pokeapi.co/api/v2/pokemon?limit=12');
                   #{{ poke.url.split('/')[6] }}
                 </span>
               </div>
-                <div class="text-center bg-light p-3">
-              <img 
-                :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${poke.url.split('/')[6]}.png`" 
-                :alt="poke.name"
-                class="img-fluid pokemon-img"
-              >
-            </div>
+              
               <h5 class="card-title text-capitalize fw-bold">{{ poke.name }}</h5>
+              
               <router-link 
                 :to="`/pokemons/${poke.name}`" 
                 class="btn btn-outline-primary btn-sm mt-2 w-100"
@@ -61,7 +70,7 @@ getData('https://pokeapi.co/api/v2/pokemon?limit=12');
           Anterior
         </button>
 
-        <span class="text-muted small">PokeAPI - Resultados</span>
+        <span class="text-muted small">Mostrando 12 por página</span>
 
         <button
           :disabled="!data.next"
@@ -76,7 +85,6 @@ getData('https://pokeapi.co/api/v2/pokemon?limit=12');
 </template>
 
 <style scoped>
-/* Estilos para la nueva imagen */
 .pokemon-img {
   width: 96px;
   height: 96px;
